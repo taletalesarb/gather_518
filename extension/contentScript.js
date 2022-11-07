@@ -15,7 +15,7 @@ let tp = setInterval(() =>
     //echo("document has audio-element?: "+ document.getElementById("audio-element"));
     //echored("window has Maps?: "+ window.hasOwnProperty("Maps"));
 
-    if(window.hasOwnProperty("Maps") && document.getElementById("audio-element"))
+    if(document.getElementsByClassName("Layout css-1oteowz"))
     {
         inject();
         clearInterval(tp);
@@ -35,7 +35,7 @@ function inject()
         game.teleport(game.players[playersOnServer[targetName]].map, game.players[playersOnServer[targetName]].x,
             game.players[playersOnServer[targetName]].y)
     }
-
+	 //game.players[gameSpace.id].name
     function getPlayers() 
     {
         let playersOnServer = [];
@@ -53,16 +53,31 @@ function inject()
         let playersOnServer = getPlayers();
         let x = gameSpace.gameState[gameSpace.id].x;
         let y = gameSpace.gameState[gameSpace.id].y;
+        let m = gameSpace.gameState[gameSpace.id].map
 
         if (playersOnServer[targetName] != undefined) {
             console.log(targetName + " was located with the ID:" + playersOnServer[targetName]);
+            
+            let px = game.players[playersOnServer[targetName]].x;
+            let py = game.players[playersOnServer[targetName]].y;
+            let pm = game.players[playersOnServer[targetName]].map
+            if (px<2){
+                px = px + 2
+            }
+            else{
+                px = px - 2
+            }
+            game.teleport(pm, px, py)
+
             game.enterWhisper(playersOnServer[targetName]);
 
-
+            game.teleport(m, x, y)
             game.setFollowTarget(''); 
             game.leaveWhisper(); 
             gameSpace.cancelFollow();
             gameSpace._cancelMove();
+            game.move(3);
+            game.move(2);
 
             var tp = setInterval(function () {
                 //game.teleport(gameSpace.mapId, x, y);
@@ -95,43 +110,8 @@ function inject()
 
             //fernsteuerbar
 
-    game.subscribeToEvent("playerChats", (data, _context) => {
-        const message = data.playerChats;
-        console.log(message);
-        if (zombieModeEnabled) 
-        {    
-            let messageText = message.contents.toLowerCase();
-            if (messageText.includes("left")){
-                messageText = messageText.replace("left","");
-                
-                for(let i = 0; i < messageText; i ++){
-                    game.move(0);
-                }
-            } else if (messageText.includes("right")){
-                messageText = messageText.replace("right","");
-                
-                for(let i = 0; i < messageText; i ++){
-                    game.move(1);
-                }
-            } else if (messageText.includes("up")){
-                messageText = messageText.replace("up","");
-                
-                for(let i = 0; i < messageText; i ++){
-                    game.move(2);
-                }
-            } else if (messageText.includes("down")){
-                messageText = messageText.replace("down","");
-                
-                for(let i = 0; i < messageText; i ++){
-                    game.move(3);
-                }
-            }
-            
-        }
-    });
-
     let tp = setInterval(() => { //Stellt sicher das die Elemente erscheinen nach dem man Videos fullscreen gemacht hat
-        if (document.getElementsByClassName("GameVideo-self-video-container").length && !document.getElementById("getOverHereButton"))
+        if (document.getElementsByClassName("GameCanvasContainer-main").length && !document.getElementById("getOverHereButton"))
         {
             createButtonWithTextbox("getOverHereButton", "Get over here", "targetnameTextbox");
             createButtonWithTextbox("teleportToButton", "Teleport to", "targetteleportTextbox");
@@ -144,6 +124,24 @@ function inject()
                 document.getElementById("zombie").style.background = zombieModeEnabled ? "rgb(247, 88, 130)" : "rgb(130, 88, 247)";
                 document.getElementById("zombie").innerHTML = zombieModeEnabled ? "Make me a Human" : "Make me a Robot";
                 echo("zombieMode(global): "  +zombieModeEnabled);
+		if (zombieModeEnabled){
+			var walk_i = 0;
+			zombie_walk = setInterval(function () {
+        			game.move(walk_i)
+				if (walk_i == 0){
+					walk_i = 3;
+				} else if (walk_i == 3){
+					walk_i = 1;
+				}else if (walk_i == 1){
+					walk_i = 2;
+				}else if (walk_i == 2){
+					walk_i = 0;
+				}
+    			}, 5000);
+		} else {
+			clearInterval(zombie_walk);
+		}
+	
             }, false);
 
             document.getElementById("getOverHereButton").addEventListener("click", function() {
@@ -187,7 +185,7 @@ function createButton(buttonID, buttonText)
     
     container.appendChild(blueButton);
 
-    document.getElementsByClassName("GameVideo-self-video-container")[0].appendChild(container);
+    document.getElementsByClassName("Layout css-1oteowz")[0].appendChild(container);
 
 }
 
@@ -232,6 +230,6 @@ function createButtonWithTextbox(buttonID, buttonText, texboxID)
     container.appendChild(textboxWrapper);
     container.appendChild(blueButton);
 
-    document.getElementsByClassName("GameVideo-self-video-container")[0].appendChild(container);
+    document.getElementsByClassName("Layout css-1oteowz")[0].appendChild(container);
 
 }
