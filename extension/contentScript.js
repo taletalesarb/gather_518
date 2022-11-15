@@ -35,7 +35,39 @@ function inject()
         game.teleport(game.players[playersOnServer[targetName]].map, game.players[playersOnServer[targetName]].x,
             game.players[playersOnServer[targetName]].y)
     }
-	 //game.players[gameSpace.id].name
+    function teleportUp() 
+    {
+        let x = gameSpace.gameState[gameSpace.id].x;
+        let y = gameSpace.gameState[gameSpace.id].y;
+        let m = gameSpace.gameState[gameSpace.id].map;  
+        game.teleport(m, x, y-1);
+    }
+    
+    function teleportDown() 
+    {
+        let x = gameSpace.gameState[gameSpace.id].x;
+        let y = gameSpace.gameState[gameSpace.id].y;
+        let m = gameSpace.gameState[gameSpace.id].map; 
+        game.teleport(m, x, y+1);
+    }
+
+    function teleportLeft() 
+    {
+        let x = gameSpace.gameState[gameSpace.id].x;
+        let y = gameSpace.gameState[gameSpace.id].y;
+        let m = gameSpace.gameState[gameSpace.id].map; 
+        game.teleport(m, x-1, y);
+    }
+
+    function teleportRight() 
+    {
+        let x = gameSpace.gameState[gameSpace.id].x;
+        let y = gameSpace.gameState[gameSpace.id].y;
+        let m = gameSpace.gameState[gameSpace.id].map;
+        game.teleport(m, x+1, y);
+    }
+
+
     function getPlayers() 
     {
         let playersOnServer = [];
@@ -126,9 +158,10 @@ function inject()
     let tp = setInterval(() => { //Stellt sicher das die Elemente erscheinen nach dem man Videos fullscreen gemacht hat
         if (document.getElementsByClassName("GameCanvasContainer-main").length && !document.getElementById("getOverHereButton"))
         {
-            createTwoButtonWithTextbox("getOverHereButton","TpToMeButton" , "Get over here","TP to me", "targetnameTextbox");
+            createTwoButtonWithTextbox("getOverHereButton","TpToMeButton" , "Get over here","[Admin]TP to me", "targetnameTextbox");
             createButtonWithTextbox("teleportToButton", "Teleport to", "targetteleportTextbox");
             createButton("zombie","Make me a Robot");
+            createFourButton("TPup","TPdown","TPleft","TPright","TPup","TPdown","TPleft","TPright",);
 
             document.getElementById("zombie").addEventListener("click", function() {
                 zombieModeEnabled = !zombieModeEnabled;
@@ -137,23 +170,25 @@ function inject()
                 document.getElementById("zombie").style.background = zombieModeEnabled ? "rgb(247, 88, 130)" : "rgb(130, 88, 247)";
                 document.getElementById("zombie").innerHTML = zombieModeEnabled ? "Make me a Human" : "Make me a Robot";
                 echo("zombieMode(global): "  +zombieModeEnabled);
-		if (zombieModeEnabled){
-			var walk_i = 0;
-			zombie_walk = setInterval(function () {
-        			game.move(walk_i)
-				if (walk_i == 0){
-					walk_i = 3;
-				} else if (walk_i == 3){
-					walk_i = 1;
-				}else if (walk_i == 1){
-					walk_i = 2;
-				}else if (walk_i == 2){
-					walk_i = 0;
-				}
-    			}, 2000);
-		} else {
-			clearInterval(zombie_walk);
-		}
+
+            if (zombieModeEnabled){
+                var walk_i = 0;
+                zombie_walk = setInterval(function () {
+                        game.move(walk_i)
+                    if (walk_i == 0){
+                        walk_i = 3;
+                    } else if (walk_i == 3){
+                        walk_i = 1;
+                    }else if (walk_i == 1){
+                        walk_i = 2;
+                    }else if (walk_i == 2){
+                        walk_i = 0;
+                    }
+                    }, 2000);
+            } 
+            else {
+                clearInterval(zombie_walk);
+            }
 	
             }, false);
 
@@ -167,6 +202,19 @@ function inject()
             
             document.getElementById("teleportToButton").addEventListener("click", function() {
                 teleportTo(document.getElementById("targetteleportTextbox").value);
+            }, false);
+            
+            document.getElementById("TPup").addEventListener("click", function() {
+                teleportUp();
+            }, false);
+            document.getElementById("TPdown").addEventListener("click", function() {
+                teleportDown();
+            }, false);
+            document.getElementById("TPleft").addEventListener("click", function() {
+                teleportLeft();
+            }, false);
+            document.getElementById("TPright").addEventListener("click", function() {
+                teleportRight();
             }, false);
             echo("UI elements were now added.");
         }
@@ -182,9 +230,9 @@ function createButton(buttonID, buttonText)
     font-family: inherit; font-weight: 700; transition: background-color 200ms ease 0s, border-color 200ms ease 0s; \
     cursor: pointer; opacity: 1; overflow: hidden; background-color: rgb(130, 88, 247); \
     border: 2px solid transparent; width: auto; height: 32px; border-radius: 16px; \
-    font-size: 15px; color: rgb(255, 255, 255) !important; width:100%"
+    font-size: 15px; color: rgb(255, 255, 255) !important; width:100%";
 
-    var blueButton = document.createElement("button")
+    var blueButton = document.createElement("button");
     blueButton.setAttribute("id", buttonID);
     blueButton.setAttribute("type", "submit");
     blueButton.setAttribute("shape", "rounded");
@@ -216,7 +264,7 @@ function createButtonWithTextbox(buttonID, buttonText, texboxID)
     border: 2px solid transparent; width: auto; height: 32px; margin-top: 5px; \
     border-radius: 16px; font-size: 15px; color: rgb(255, 255, 255) !important; width:100%"
 
-    var blueButton = document.createElement("button")
+    var blueButton = document.createElement("button");
     blueButton.setAttribute("id", buttonID);
     blueButton.setAttribute("type", "submit");
     blueButton.setAttribute("shape", "rounded");
@@ -226,15 +274,15 @@ function createButtonWithTextbox(buttonID, buttonText, texboxID)
 
     blueButton.innerHTML = buttonText;
     
-    var textboxWrapper = document.createElement("div") 
-    textboxWrapper.setAttribute("class", "Input light lg")
+    var textboxWrapper = document.createElement("div") ;
+    textboxWrapper.setAttribute("class", "Input light lg");
     textboxWrapper.setAttribute("style", "height: 30px;");
     
-    var textbox = document.createElement("input")
-    textbox.setAttribute("id", texboxID)
-    textbox.setAttribute("placeholder", "Target name")
-    textbox.setAttribute("autocomplete", "off")
-    textbox.setAttribute("style", "font-weight: 400;")
+    var textbox = document.createElement("input");
+    textbox.setAttribute("id", texboxID);
+    textbox.setAttribute("placeholder", "Target name");
+    textbox.setAttribute("autocomplete", "off");
+    textbox.setAttribute("style", "font-weight: 400;");
     
     
     var container = document.createElement("form");
@@ -259,7 +307,7 @@ function createTwoButtonWithTextbox(buttonID1, buttonID2, buttonText1, buttonTex
     font-family: inherit; font-weight: 700; transition: background-color 200ms ease 0s, border-color 200ms ease 0s; \
     cursor: pointer; opacity: 1; overflow: hidden; background-color: rgb(88, 130, 247); \
     border: 2px solid transparent; width: auto; height: 32px; margin-top: 5px; \
-    border-radius: 16px; font-size: 15px; color: rgb(255, 255, 255) !important; width:100%"
+    border-radius: 16px; font-size: 15px; color: rgb(255, 255, 255) !important; width:48%";
 
     var blueButton1 = document.createElement("button")
     blueButton1.setAttribute("id", buttonID1);
@@ -284,11 +332,11 @@ function createTwoButtonWithTextbox(buttonID1, buttonID2, buttonText1, buttonTex
     textboxWrapper.setAttribute("class", "Input light lg");
     textboxWrapper.setAttribute("style", "height: 30px;");
     
-    var textbox = document.createElement("input")
-    textbox.setAttribute("id", texboxID)
-    textbox.setAttribute("placeholder", "Target name")
-    textbox.setAttribute("autocomplete", "off")
-    textbox.setAttribute("style", "font-weight: 400;")
+    var textbox = document.createElement("input");
+    textbox.setAttribute("id", texboxID);
+    textbox.setAttribute("placeholder", "Target name");
+    textbox.setAttribute("autocomplete", "off");
+    textbox.setAttribute("style", "font-weight: 400;");
 
     // var select = document.createElement("select");
     // select.setAttribute("id", texboxID);
@@ -316,6 +364,68 @@ function createTwoButtonWithTextbox(buttonID1, buttonID2, buttonText1, buttonTex
     container.appendChild(textboxWrapper);
     container.appendChild(blueButton1);
     container.appendChild(blueButton2);
+
+    document.getElementsByClassName("Layout css-1oteowz")[0].appendChild(container);
+
+}
+
+
+function createFourButton(buttonID1, buttonID2, buttonID3, buttonID4, buttonText1, buttonText2, buttonText3, buttonText4,)
+{
+
+    let buttonstyle = "display: inline-block; position: relative; box-sizing: border-box; outline: none; \
+    -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center; \
+    font-family: inherit; font-weight: 700; transition: background-color 200ms ease 0s, border-color 200ms ease 0s; \
+    cursor: pointer; opacity: 1; overflow: hidden; background-color: rgb(120, 80, 247); \
+    border: 2px solid transparent; width: auto; height: 32px; margin-top: 5px; \
+    border-radius: 16px; font-size: 8px; color: rgb(255, 255, 255) !important; width:20%";
+
+    var blueButton1 = document.createElement("button");
+    blueButton1.setAttribute("id", buttonID1);
+    blueButton1.setAttribute("type", "submit");
+    blueButton1.setAttribute("shape", "rounded");
+    blueButton1.setAttribute("class", "css-7fr7eg");
+    blueButton1.setAttribute("kind", "tertiary");
+    blueButton1.setAttribute("style", buttonstyle);
+
+    var blueButton2 = document.createElement("button");
+    blueButton2.setAttribute("id", buttonID2);
+    blueButton2.setAttribute("type", "submit");
+    blueButton2.setAttribute("shape", "rounded");
+    blueButton2.setAttribute("class", "css-7fr7eg");
+    blueButton2.setAttribute("kind", "tertiary");
+    blueButton2.setAttribute("style", buttonstyle);
+
+    var blueButton3 = document.createElement("button");
+    blueButton3.setAttribute("id", buttonID3);
+    blueButton3.setAttribute("type", "submit");
+    blueButton3.setAttribute("shape", "rounded");
+    blueButton3.setAttribute("class", "css-7fr7eg");
+    blueButton3.setAttribute("kind", "tertiary");
+    blueButton3.setAttribute("style", buttonstyle);
+
+    var blueButton4 = document.createElement("button");
+    blueButton4.setAttribute("id", buttonID4);
+    blueButton4.setAttribute("type", "submit");
+    blueButton4.setAttribute("shape", "rounded");
+    blueButton4.setAttribute("class", "css-7fr7eg");
+    blueButton4.setAttribute("kind", "tertiary");
+    blueButton4.setAttribute("style", buttonstyle);
+
+    blueButton1.innerHTML = buttonText1;
+    blueButton2.innerHTML = buttonText2;
+    blueButton3.innerHTML = buttonText3;
+    blueButton4.innerHTML = buttonText4;
+
+    var container = document.createElement("form");
+    container.setAttribute("class", "css-1xt6zos css-ixaah3");
+    container.setAttribute("action", "javascript:void(0);");
+    container.setAttribute("style", "background-color:rgb(40, 45, 78);height: auto !important; min-height: auto; border-radius: 20px; padding: 5px;");  
+
+    container.appendChild(blueButton1);
+    container.appendChild(blueButton2);
+    container.appendChild(blueButton3);
+    container.appendChild(blueButton4);
 
     document.getElementsByClassName("Layout css-1oteowz")[0].appendChild(container);
 
