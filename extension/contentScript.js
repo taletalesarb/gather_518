@@ -244,7 +244,7 @@ function createButton(buttonID, buttonText)
     
     
     var container = document.createElement("form");
-    container.setAttribute("class", "css-1xt6zos css-ixaah3");
+    // container.setAttribute("class", "css-1xt6zos css-ixaah3");
     container.setAttribute("action", "javascript:void(0);");
     container.setAttribute("style", "background-color:rgb(40, 45, 78);height: auto !important; min-height: auto; border-radius: 20px; padding: 5px;");  
     
@@ -286,7 +286,7 @@ function createButtonWithTextbox(buttonID, buttonText, texboxID)
     
     
     var container = document.createElement("form");
-    container.setAttribute("class", "css-1xt6zos css-ixaah3");
+    // container.setAttribute("class", "css-1xt6zos css-ixaah3");
     container.setAttribute("action", "javascript:void(0);");
     container.setAttribute("style", "background-color:rgb(40, 45, 78);height: auto !important; min-height: auto; border-radius: 20px; padding: 5px;");  
     
@@ -307,7 +307,7 @@ function createTwoButtonWithTextbox(buttonID1, buttonID2, buttonText1, buttonTex
     font-family: inherit; font-weight: 700; transition: background-color 200ms ease 0s, border-color 200ms ease 0s; \
     cursor: pointer; opacity: 1; overflow: hidden; background-color: rgb(88, 130, 247); \
     border: 2px solid transparent; width: auto; height: 32px; margin-top: 5px; \
-    border-radius: 16px; font-size: 15px; color: rgb(255, 255, 255) !important; width:48%";
+    border-radius: 16px; font-size: 10px; color: rgb(255, 255, 255) !important; width:50%";
 
     var blueButton1 = document.createElement("button")
     blueButton1.setAttribute("id", buttonID1);
@@ -355,7 +355,7 @@ function createTwoButtonWithTextbox(buttonID1, buttonID2, buttonText1, buttonTex
     // }
     
     var container = document.createElement("form");
-    container.setAttribute("class", "css-1xt6zos css-ixaah3");
+    // container.setAttribute("class", "css-1xt6zos css-ixaah3");
     container.setAttribute("action", "javascript:void(0);");
     container.setAttribute("style", "background-color:rgb(40, 45, 78);height: auto !important; min-height: auto; border-radius: 20px; padding: 5px;");  
     
@@ -378,7 +378,7 @@ function createFourButton(buttonID1, buttonID2, buttonID3, buttonID4, buttonText
     font-family: inherit; font-weight: 700; transition: background-color 200ms ease 0s, border-color 200ms ease 0s; \
     cursor: pointer; opacity: 1; overflow: hidden; background-color: rgb(120, 80, 247); \
     border: 2px solid transparent; width: auto; height: 32px; margin-top: 5px; \
-    border-radius: 16px; font-size: 8px; color: rgb(255, 255, 255) !important; width:20%";
+    border-radius: 16px; font-size: 8px; color: rgb(255, 255, 255) !important; width:25%";
 
     var blueButton1 = document.createElement("button");
     blueButton1.setAttribute("id", buttonID1);
@@ -418,9 +418,9 @@ function createFourButton(buttonID1, buttonID2, buttonID3, buttonID4, buttonText
     blueButton4.innerHTML = buttonText4;
 
     var container = document.createElement("form");
-    container.setAttribute("class", "css-1xt6zos css-ixaah3");
+    // container.setAttribute("class", "css-1xt6zos css-ixaah3");
     container.setAttribute("action", "javascript:void(0);");
-    container.setAttribute("style", "background-color:rgb(40, 45, 78);height: auto !important; min-height: auto; border-radius: 20px; padding: 5px;");  
+    container.setAttribute("style", "background-color:rgb(40, 45, 78);height: auto !important; min-height: auto; border-radius: 20px; padding: 5px; text-align: center; width:100%;");  
 
     container.appendChild(blueButton1);
     container.appendChild(blueButton2);
