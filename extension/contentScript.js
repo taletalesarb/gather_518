@@ -10,7 +10,7 @@ function echored(text){
 
 echo("contentScript.js: SCRIPT LOADED");
 
-let tp = setInterval(() => 
+let wait_loading = setInterval(() => 
 {
     //echo("document has audio-element?: "+ document.getElementById("audio-element"));
     //echored("window has Maps?: "+ window.hasOwnProperty("Maps"));
@@ -18,7 +18,7 @@ let tp = setInterval(() =>
     if(document.getElementsByClassName("Layout css-1oteowz"))
     {
         inject();
-        clearInterval(tp);
+        clearInterval(wait_loading);
     }
 }, 518)
 
@@ -35,36 +35,79 @@ function inject()
         game.teleport(game.players[playersOnServer[targetName]].map, game.players[playersOnServer[targetName]].x,
             game.players[playersOnServer[targetName]].y)
     }
-    function teleportUp() 
+
+    function teleportAllyUp(targetName) 
     {
-        let x = gameSpace.gameState[gameSpace.id].x;
-        let y = gameSpace.gameState[gameSpace.id].y;
-        let m = gameSpace.gameState[gameSpace.id].map;  
-        game.teleport(m, x, y-1);
-    }
-    
-    function teleportDown() 
-    {
-        let x = gameSpace.gameState[gameSpace.id].x;
-        let y = gameSpace.gameState[gameSpace.id].y;
-        let m = gameSpace.gameState[gameSpace.id].map; 
-        game.teleport(m, x, y+1);
+        console.log(targetName)
+        let playersOnServer = getPlayers();
+        
+        if (playersOnServer[targetName] != undefined){  
+            let x = game.players[playersOnServer[targetName]].x;
+            let y = game.players[playersOnServer[targetName]].y;
+            let m = game.players[playersOnServer[targetName]].map;
+            game.teleport(m, x, y-1, playersOnServer[targetName]);
+        }
+
+        if (targetName == ''){
+            let x = gameSpace.gameState[gameSpace.id].x;
+            let y = gameSpace.gameState[gameSpace.id].y;
+            let m = gameSpace.gameState[gameSpace.id].map;  
+            game.teleport(m, x, y-1); 
+        }
     }
 
-    function teleportLeft() 
+    function teleportAllyDown(targetName) 
     {
-        let x = gameSpace.gameState[gameSpace.id].x;
-        let y = gameSpace.gameState[gameSpace.id].y;
-        let m = gameSpace.gameState[gameSpace.id].map; 
-        game.teleport(m, x-1, y);
+        let playersOnServer = getPlayers();
+        
+        if (playersOnServer[targetName] != undefined){ 
+            let x = game.players[playersOnServer[targetName]].x;
+            let y = game.players[playersOnServer[targetName]].y;
+            let m = game.players[playersOnServer[targetName]].map; 
+            game.teleport(m, x, y+1, playersOnServer[targetName]);
+        }
+        if (targetName == ''){
+            let x = gameSpace.gameState[gameSpace.id].x;
+            let y = gameSpace.gameState[gameSpace.id].y;
+            let m = gameSpace.gameState[gameSpace.id].map; 
+            game.teleport(m, x, y+1);
+        }
     }
 
-    function teleportRight() 
+    function teleportAllyLeft(targetName) 
     {
-        let x = gameSpace.gameState[gameSpace.id].x;
-        let y = gameSpace.gameState[gameSpace.id].y;
-        let m = gameSpace.gameState[gameSpace.id].map;
-        game.teleport(m, x+1, y);
+        let playersOnServer = getPlayers();
+        
+        if (playersOnServer[targetName] != undefined){  
+            let x = game.players[playersOnServer[targetName]].x;
+            let y = game.players[playersOnServer[targetName]].y;
+            let m = game.players[playersOnServer[targetName]].map;
+            game.teleport(m, x-1, y, playersOnServer[targetName]);
+        }
+        if (targetName == ''){
+            let x = gameSpace.gameState[gameSpace.id].x;
+            let y = gameSpace.gameState[gameSpace.id].y;
+            let m = gameSpace.gameState[gameSpace.id].map; 
+            game.teleport(m, x-1, y);
+        }
+    }
+
+    function teleportAllyRight(targetName) 
+    {
+        let playersOnServer = getPlayers();
+        
+        if (playersOnServer[targetName] != undefined){  
+            let x = game.players[playersOnServer[targetName]].x;
+            let y = game.players[playersOnServer[targetName]].y;
+            let m = game.players[playersOnServer[targetName]].map;
+            game.teleport(m, x+1, y, playersOnServer[targetName]);
+        }
+        if (targetName == ''){
+            let x = gameSpace.gameState[gameSpace.id].x;
+            let y = gameSpace.gameState[gameSpace.id].y;
+            let m = gameSpace.gameState[gameSpace.id].map;
+            game.teleport(m, x+1, y);
+        }
     }
 
 
@@ -161,7 +204,7 @@ function inject()
             createTwoButtonWithTextbox("getOverHereButton","TpToMeButton" , "Get over here","[Admin]TP to me", "targetnameTextbox");
             createButtonWithTextbox("teleportToButton", "Teleport to", "targetteleportTextbox");
             createButton("zombie","Make me a Robot");
-            createFourButton("TPup","TPdown","TPleft","TPright","TPup","TPdown","TPleft","TPright",);
+            createFourButtonWithTextbox("allyTPup","allyTPdown","allyTPleft","allyTPright","tartgetAllyTP","TPup","TPdown","TPleft","TPright");
 
             document.getElementById("zombie").addEventListener("click", function() {
                 zombieModeEnabled = !zombieModeEnabled;
@@ -191,7 +234,7 @@ function inject()
             }
 	
             }, false);
-
+            
             document.getElementById("getOverHereButton").addEventListener("click", function() {
                 getOverHere(document.getElementById("targetnameTextbox").value);
             }, false);
@@ -203,19 +246,19 @@ function inject()
             document.getElementById("teleportToButton").addEventListener("click", function() {
                 teleportTo(document.getElementById("targetteleportTextbox").value);
             }, false);
-            
-            document.getElementById("TPup").addEventListener("click", function() {
-                teleportUp();
+            document.getElementById("allyTPup").addEventListener("click", function() {
+                teleportAllyUp(document.getElementById("tartgetAllyTP").value);
             }, false);
-            document.getElementById("TPdown").addEventListener("click", function() {
-                teleportDown();
+            document.getElementById("allyTPdown").addEventListener("click", function() {
+                teleportAllyDown(document.getElementById("tartgetAllyTP").value);
             }, false);
-            document.getElementById("TPleft").addEventListener("click", function() {
-                teleportLeft();
+            document.getElementById("allyTPleft").addEventListener("click", function() {
+                teleportAllyLeft(document.getElementById("tartgetAllyTP").value);
             }, false);
-            document.getElementById("TPright").addEventListener("click", function() {
-                teleportRight();
+            document.getElementById("allyTPright").addEventListener("click", function() {
+                teleportAllyRight(document.getElementById("tartgetAllyTP").value);
             }, false);
+
             echo("UI elements were now added.");
         }
     }, 256);
@@ -421,6 +464,81 @@ function createFourButton(buttonID1, buttonID2, buttonID3, buttonID4, buttonText
     // container.setAttribute("class", "css-1xt6zos css-ixaah3");
     container.setAttribute("action", "javascript:void(0);");
     container.setAttribute("style", "background-color:rgb(40, 45, 78);height: auto !important; min-height: auto; border-radius: 20px; padding: 5px; text-align: center; width:100%;");  
+
+    container.appendChild(blueButton1);
+    container.appendChild(blueButton2);
+    container.appendChild(blueButton3);
+    container.appendChild(blueButton4);
+
+    document.getElementsByClassName("Layout css-1oteowz")[0].appendChild(container);
+
+}
+
+
+function createFourButtonWithTextbox(buttonID1, buttonID2, buttonID3, buttonID4, texboxID, buttonText1, buttonText2, buttonText3, buttonText4)
+{
+
+    let buttonstyle = "display: inline-block; position: relative; box-sizing: border-box; outline: none; \
+    -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center; \
+    font-family: inherit; font-weight: 700; transition: background-color 200ms ease 0s, border-color 200ms ease 0s; \
+    cursor: pointer; opacity: 1; overflow: hidden; background-color: rgb(120, 80, 247); \
+    border: 2px solid transparent; width: auto; height: 32px; margin-top: 5px; \
+    border-radius: 16px; font-size: 8px; color: rgb(255, 255, 255) !important; width:25%";
+
+    var blueButton1 = document.createElement("button");
+    blueButton1.setAttribute("id", buttonID1);
+    blueButton1.setAttribute("type", "submit");
+    blueButton1.setAttribute("shape", "rounded");
+    blueButton1.setAttribute("class", "css-7fr7eg");
+    blueButton1.setAttribute("kind", "tertiary");
+    blueButton1.setAttribute("style", buttonstyle);
+
+    var blueButton2 = document.createElement("button");
+    blueButton2.setAttribute("id", buttonID2);
+    blueButton2.setAttribute("type", "submit");
+    blueButton2.setAttribute("shape", "rounded");
+    blueButton2.setAttribute("class", "css-7fr7eg");
+    blueButton2.setAttribute("kind", "tertiary");
+    blueButton2.setAttribute("style", buttonstyle);
+
+    var blueButton3 = document.createElement("button");
+    blueButton3.setAttribute("id", buttonID3);
+    blueButton3.setAttribute("type", "submit");
+    blueButton3.setAttribute("shape", "rounded");
+    blueButton3.setAttribute("class", "css-7fr7eg");
+    blueButton3.setAttribute("kind", "tertiary");
+    blueButton3.setAttribute("style", buttonstyle);
+
+    var blueButton4 = document.createElement("button");
+    blueButton4.setAttribute("id", buttonID4);
+    blueButton4.setAttribute("type", "submit");
+    blueButton4.setAttribute("shape", "rounded");
+    blueButton4.setAttribute("class", "css-7fr7eg");
+    blueButton4.setAttribute("kind", "tertiary");
+    blueButton4.setAttribute("style", buttonstyle);
+
+    blueButton1.innerHTML = buttonText1;
+    blueButton2.innerHTML = buttonText2;
+    blueButton3.innerHTML = buttonText3;
+    blueButton4.innerHTML = buttonText4;
+
+    var textboxWrapper = document.createElement("div") ;
+    textboxWrapper.setAttribute("class", "Input light lg");
+    textboxWrapper.setAttribute("style", "height: 30px;");
+    
+    var textbox = document.createElement("input");
+    textbox.setAttribute("id", texboxID);
+    textbox.setAttribute("placeholder", "Target name");
+    textbox.setAttribute("autocomplete", "off");
+    textbox.setAttribute("style", "font-weight: 400;");
+
+    var container = document.createElement("form");
+    // container.setAttribute("class", "css-1xt6zos css-ixaah3");
+    container.setAttribute("action", "javascript:void(0);");
+    container.setAttribute("style", "background-color:rgb(40, 45, 78);height: auto !important; min-height: auto; border-radius: 20px; padding: 5px; text-align: center; width:100%;");  
+
+    textboxWrapper.appendChild(textbox);
+    container.appendChild(textboxWrapper);
 
     container.appendChild(blueButton1);
     container.appendChild(blueButton2);
